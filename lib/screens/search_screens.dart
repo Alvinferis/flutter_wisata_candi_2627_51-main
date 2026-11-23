@@ -1,0 +1,140 @@
+import 'package:flutter/material.dart';
+import '../models/candi.dart';
+import '../data/candi_data.dart';
+
+class SearchScreen extends StatefulWidget {
+  const SearchScreen({super.key});
+
+  @override
+  State<SearchScreen> createState() => _SearchScreenState();
+}
+
+class _SearchScreenState extends State<SearchScreen> {
+
+  // TODO: 1. Deklarasikan variabel yang dibutuhkan
+  List<Candi> _filteredCandis = candiList;
+  String _searchQuery = '';
+
+  final TextEditingController _searchController =
+      TextEditingController();
+
+  // TODO: 6. Implementasi fitur pencarian
+  void _searchCandi(String query) {
+    setState(() {
+      _searchQuery = query;
+
+      _filteredCandis = candiList.where((candi) {
+        return candi.name
+            .toLowerCase()
+            .contains(query.toLowerCase());
+      }).toList();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+
+      // TODO: 2. Buat AppBar
+      appBar: AppBar(
+        title: Text('Pencarian Candi'),
+      ),
+
+      // TODO: 3. Buat body berupa Column
+      body: Column(
+        children: [
+
+          // TODO: 4. TextField pencarian
+          Padding(
+            padding: EdgeInsets.all(16),
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(5),
+                color: Colors.deepPurple[50],
+              ),
+              child: TextField(
+                controller: _searchController,
+                autofocus: false,
+                onChanged: _searchCandi,
+                decoration: InputDecoration(
+                  hintText: 'Cari candi ...',
+                  prefixIcon: Icon(Icons.search),
+                  border: InputBorder.none,
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Colors.deepPurple,
+                    ),
+                  ),
+                  contentPadding: EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
+                ),
+              ),
+            ),
+          ),
+
+          // TODO: 5. ListView hasil pencarian
+          Expanded(
+            child: ListView.builder(
+              itemCount: _filteredCandis.length,
+              itemBuilder: (context, index) {
+                final candi = _filteredCandis[index];
+
+                return Card(
+                  margin: EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 4,
+                  ),
+                  child: Row(
+                    crossAxisAlignment:
+                        CrossAxisAlignment.start,
+                    children: [
+
+                      // Image
+                      Container(
+                        padding: EdgeInsets.all(8),
+                        width: 100,
+                        height: 100,
+                        child: ClipRRect(
+                          borderRadius:
+                              BorderRadius.circular(10),
+                          child: Image.asset(
+                            candi.imageAsset,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+
+                      // Column
+                      Padding(
+                        padding: EdgeInsets.all(8),
+                        child: Column(
+                          crossAxisAlignment:
+                              CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              candi.name,
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+
+                            SizedBox(height: 4),
+
+                            Text(candi.location),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
